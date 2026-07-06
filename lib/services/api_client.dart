@@ -119,17 +119,23 @@ class ApiClient {
   }
 
   Map<String, dynamic> _handle(http.Response response) {
-    Map<String, dynamic> body;
+    dynamic decoded;
     try {
-      body = response.body.isEmpty
-          ? <String, dynamic>{}
-          : jsonDecode(response.body) as Map<String, dynamic>;
+      decoded = response.body.isEmpty ? <String, dynamic>{} : jsonDecode(response.body);
     } on FormatException {
       throw ApiException(
         'The server returned an unexpected response.',
         statusCode: response.statusCode,
       );
     }
+
+    if (decoded is! Map<String, dynamic>) {
+      throw ApiException(
+        'The server returned an unexpected response.',
+        statusCode: response.statusCode,
+      );
+    }
+    final body = decoded;
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       return body;
