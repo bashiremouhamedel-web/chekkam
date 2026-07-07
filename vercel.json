@@ -1,14 +1,10 @@
 {
   "buildCommand": "bash vercel-build.sh",
   "outputDirectory": "build/web",
-<<<<<<< HEAD
-  "framework": null
-=======
   "rewrites": [
     {
       "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
->>>>>>> a699392813bd6c85bde50d6c8526c2d9d50910f0
 }
