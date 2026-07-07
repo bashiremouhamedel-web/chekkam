@@ -16,7 +16,7 @@ class StatusBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = status.color;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: ChekkamSpacing.md, vertical: ChekkamSpacing.xs),
+      padding: const EdgeInsets.symmetric(horizontal: ChekkamSpacing.lg, vertical: ChekkamSpacing.sm),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(ChekkamRadius.pill),
@@ -25,15 +25,22 @@ class StatusBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 16, color: color),
-            const SizedBox(width: ChekkamSpacing.xs),
+            Icon(icon, size: 17, color: color),
+            const SizedBox(width: ChekkamSpacing.sm),
+          ] else ...[
+            Container(
+              width: 7,
+              height: 7,
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+            ),
+            const SizedBox(width: ChekkamSpacing.sm),
           ],
           Text(
             label,
             style: Theme.of(context)
                 .textTheme
                 .bodyMedium
-                ?.copyWith(color: color, fontWeight: FontWeight.w600),
+                ?.copyWith(color: color, fontWeight: FontWeight.w700),
           ),
         ],
       ),

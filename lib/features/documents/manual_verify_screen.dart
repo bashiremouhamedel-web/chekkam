@@ -63,7 +63,11 @@ class _ManualVerifyScreenState extends ConsumerState<ManualVerifyScreen> {
             TextField(
               controller: _controller,
               textCapitalization: TextCapitalization.characters,
-              decoration: const InputDecoration(hintText: 'CHK-4F7K-9QRT or 482915'),
+              style: ChekkamTheme.mono(fontSize: 16, color: ChekkamColors.ink),
+              decoration: InputDecoration(
+                hintText: 'CHK-4F7K-9QRT or 482915',
+                hintStyle: ChekkamTheme.mono(fontSize: 16, color: ChekkamColors.faint),
+              ),
               onSubmitted: (_) => _submit(),
             ),
             if (_error != null) ...[

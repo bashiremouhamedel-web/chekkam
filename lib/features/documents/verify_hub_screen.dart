@@ -13,9 +13,10 @@ class VerifyHubScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ChekkamColors.surface,
       appBar: AppBar(title: const Text('Verify a document')),
       body: ListView(
-        padding: const EdgeInsets.all(ChekkamSpacing.lg),
+        padding: const EdgeInsets.all(ChekkamSpacing.xl),
         children: [
           Text(
             'Check whether a certificate, letter, or other official document is genuine.',
@@ -63,12 +64,19 @@ class _Option extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Material(
+      color: ChekkamColors.surfaceRaised,
+      borderRadius: BorderRadius.circular(ChekkamRadius.card),
       child: InkWell(
         borderRadius: BorderRadius.circular(ChekkamRadius.card),
         onTap: onTap,
-        child: Padding(
+        child: Container(
           padding: const EdgeInsets.all(ChekkamSpacing.lg),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(ChekkamRadius.card),
+            border: Border.all(color: ChekkamColors.border),
+            boxShadow: ChekkamShadows.sm,
+          ),
           child: Row(
             children: [
               IconCircle(icon: icon),
@@ -81,15 +89,13 @@ class _Option extends StatelessWidget {
                     const SizedBox(height: ChekkamSpacing.xs),
                     Text(
                       subtitle,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(color: ChekkamColors.muted),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: ChekkamColors.faint),
                     ),
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right_rounded, color: ChekkamColors.muted),
+              const SizedBox(width: ChekkamSpacing.sm),
+              const Icon(Icons.chevron_right_rounded, color: ChekkamColors.faint),
             ],
           ),
         ),

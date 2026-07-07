@@ -19,9 +19,10 @@ class ReportResultScreen extends StatelessWidget {
     final config = _riskConfig(riskLevel);
 
     return Scaffold(
+      backgroundColor: ChekkamColors.surface,
       appBar: AppBar(title: const Text('Analysis result')),
       body: ListView(
-        padding: const EdgeInsets.all(ChekkamSpacing.lg),
+        padding: const EdgeInsets.all(ChekkamSpacing.xl),
         children: [
           if (config != null)
             StatusBadge(status: config.status, label: config.label, icon: Icons.shield_outlined)
@@ -34,23 +35,43 @@ class ReportResultScreen extends StatelessWidget {
           const SizedBox(height: ChekkamSpacing.lg),
           Text(
             recommendedAction ?? 'This report is queued for review — check back shortly.',
-            style: Theme.of(context).textTheme.headlineSmall,
+            style: ChekkamTheme.display(fontSize: 24, height: 1.25),
           ),
           if (reasons.isNotEmpty) ...[
             const SizedBox(height: ChekkamSpacing.xl),
-            Text('Why we think this', style: Theme.of(context).textTheme.titleLarge),
+            Text(
+              'WHY WE THINK THIS',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.6,
+                    color: ChekkamColors.faint,
+                  ),
+            ),
             const SizedBox(height: ChekkamSpacing.sm),
-            ...reasons.map(
-              (reason) => Padding(
-                padding: const EdgeInsets.only(bottom: ChekkamSpacing.sm),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Icon(Icons.circle, size: 6, color: ChekkamColors.muted),
-                    const SizedBox(width: ChekkamSpacing.sm),
-                    Expanded(child: Text(reason, style: Theme.of(context).textTheme.bodyMedium)),
-                  ],
-                ),
+            Container(
+              padding: const EdgeInsets.all(ChekkamSpacing.lg),
+              decoration: BoxDecoration(
+                color: ChekkamColors.surfaceRaised,
+                borderRadius: BorderRadius.circular(ChekkamRadius.card),
+                border: Border.all(color: ChekkamColors.border),
+                boxShadow: ChekkamShadows.sm,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (final reason in reasons)
+                    Padding(
+                      padding: EdgeInsets.only(bottom: reason == reasons.last ? 0 : ChekkamSpacing.sm),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.circle, size: 6, color: ChekkamColors.faint),
+                          const SizedBox(width: ChekkamSpacing.sm),
+                          Expanded(child: Text(reason, style: Theme.of(context).textTheme.bodyMedium)),
+                        ],
+                      ),
+                    ),
+                ],
               ),
             ),
           ],

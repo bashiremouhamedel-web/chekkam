@@ -11,6 +11,17 @@ rules, and full technical spec live in the companion documents in this folder:
 - `Chekkam_Phase2_Build_Spec.md` — the Phase 2 delta spec (channels, key issuance, the
   report→review→publish loop). "P2-xx" references below point into that document.
 
+## 0. Brand refresh (v2)
+
+The visual identity was redesigned: deepened "Lagoon" teal, one sparing gold accent, a
+Fraunces/Inter/IBM Plex Mono type system (a warm serif for headlines and verdicts, nodding to
+certificates and seals), bigger radii and soft layered shadows instead of flat Material
+defaults, an intent-first Flutter home screen, "seal moment" verify-result screens (one focal
+badge, one verdict word), and a sidebar + bento-stat-tile redesign of the web dashboard. Both
+light and dark mode are supported end to end in both clients. Full rationale and exact tokens
+are in `Chekkam_Brand_Guide.md` v2.0 — `lib/app/theme.dart` (Flutter) and
+`chekkam-backend/app/globals.css` are the source of truth in code.
+
 ## 1. Three coordinated codebases, one system
 
 Chekkam is genuinely three applications sharing one backend contract — not a split made for

@@ -30,6 +30,7 @@ class _PublicAlertsScreenState extends ConsumerState<PublicAlertsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ChekkamColors.surface,
       appBar: AppBar(title: const Text('Public alerts')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _future,
@@ -62,15 +63,30 @@ class _PublicAlertsScreenState extends ConsumerState<PublicAlertsScreen> {
             separatorBuilder: (_, _) => const SizedBox(height: ChekkamSpacing.md),
             itemBuilder: (context, index) {
               final alert = alerts[index];
+              final severity = '${alert['severity'] ?? 'info'}';
+              final severityColor = switch (severity) {
+                'critical' => ChekkamColors.danger,
+                'warning' => ChekkamColors.warning,
+                _ => ChekkamColors.primary,
+              };
               return Card(
                 child: Padding(
                   padding: const EdgeInsets.all(ChekkamSpacing.lg),
-                  child: Column(
+                  child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('${alert['title']}', style: Theme.of(context).textTheme.titleLarge),
-                      const SizedBox(height: ChekkamSpacing.sm),
-                      Text('${alert['body']}', style: Theme.of(context).textTheme.bodyMedium),
+                      Icon(Icons.campaign_rounded, color: severityColor, size: 22),
+                      const SizedBox(width: ChekkamSpacing.md),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('${alert['title']}', style: Theme.of(context).textTheme.titleLarge),
+                            const SizedBox(height: ChekkamSpacing.sm),
+                            Text('${alert['body']}', style: Theme.of(context).textTheme.bodyMedium),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
