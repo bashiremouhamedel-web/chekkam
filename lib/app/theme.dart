@@ -1,50 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Brand tokens — v2 (warmed lagoon teal + gold accent, Fraunces/Inter/Plex
-/// Mono type system). Keep this file as the single source of truth for
+/// Brand tokens — v3 (bold red/maroon/ink identity, Fraunces/Inter/Plex Mono
+/// type system unchanged). Keep this file as the single source of truth for
 /// color/type/spacing/radius/shadow so the app never drifts as screens are
 /// added. See Chekkam_Brand_Guide.md for the full rationale.
 class ChekkamColors {
   ChekkamColors._();
 
-  // Brand — deep lagoon teal is the trust anchor; gold is a single sparing
-  // warm accent (a seal's glow, one highlight) — never a whole section.
-  static const lagoon = Color(0xFF073F3A); // deepest teal — hero/dark surfaces
-  static const primary = Color(0xFF0E6C61); // primary actions, links
-  static const secondary = Color(0xFF0E6C61);
-  static const brightTeal = Color(0xFF2FB69C); // hover/active/gradient highlight
-  static const gold = Color(0xFFC98A22); // sparing warm accent
+  // Brand — vivid red is the trust/action anchor; deep maroon is the dark
+  // surface/hero anchor. Danger status deliberately reuses the maroon (not
+  // primary) so a "Tampered" badge never looks identical to an ordinary
+  // button — see §3.2 in the brand guide.
+  static const maroon = Color(0xFF68020F); // deepest red — hero/dark surfaces
+  static const primary = Color(0xFFF21137); // primary actions, links
+  static const secondary = Color(0xFFF21137);
+  static const brightRed = Color(0xFFFF3355); // hover/active/gradient highlight
 
-  // Neutrals — a pine-tinted ink instead of generic slate; a warm-neutral
-  // surface instead of stark white.
-  static const ink = Color(0xFF0F211D);
-  static const muted = Color(0xFF4C5E57);
-  static const faint = Color(0xFF7C8C86);
-  static const surface = Color(0xFFFAFAF7); // page background
+  // Neutrals — true near-black ink, near-white surface, per brand palette.
+  static const ink = Color(0xFF030303);
+  static const muted = Color(0xFF4A4A4A);
+  static const faint = Color(0xFF8A8080);
+  static const surface = Color(0xFFFFFFFE); // page background
   static const surfaceRaised = Color(0xFFFFFFFF); // card fill
-  static const tint = Color(0xFFEFF4F1); // recessed sections / fields
-  static const border = Color(0xFFDEE7E2);
+  static const tint = Color(0xFFF7F1F1); // recessed sections / fields
+  static const border = Color(0xFFE8DEDE);
   static const white = Color(0xFFFFFFFF);
 
-  // Semantic status — deliberately distinct from brand accents (§3.2) and
-  // from the gold accent, so "this is Chekkam-branded" never reads as
-  // "this is a status result."
+  // Semantic status — success/warning stay distinct hues from the brand red;
+  // danger intentionally uses the brand's own maroon (§3.2 in the guide
+  // explains why that's still safe: paired with icon + label everywhere).
   static const success = Color(0xFF1E8E5A);
   static const warning = Color(0xFFB5690F);
-  static const danger = Color(0xFFC4392A);
-  static const neutral = Color(0xFF7C8C86);
+  static const danger = Color(0xFF68020F);
+  static const neutral = Color(0xFF7C7272);
 
   static const gradientHero = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [lagoon, primary],
+    colors: [maroon, primary],
   );
 
   static const gradientSeal = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [brightTeal, gold],
+    colors: [primary, ink],
   );
 
   static LinearGradient gradientForStatus(ChekkamStatus status) {
@@ -202,7 +202,7 @@ class ChekkamTheme {
       seedColor: ChekkamColors.primary,
       brightness: Brightness.light,
       primary: ChekkamColors.primary,
-      secondary: ChekkamColors.brightTeal,
+      secondary: ChekkamColors.brightRed,
       surface: ChekkamColors.surfaceRaised,
       error: ChekkamColors.danger,
     );

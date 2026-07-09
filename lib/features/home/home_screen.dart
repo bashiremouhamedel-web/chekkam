@@ -160,7 +160,7 @@ class _PasteToCheckCard extends StatelessWidget {
               Text(
                 'GOT SOMETHING SUSPICIOUS?',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: ChekkamColors.brightTeal,
+                      color: ChekkamColors.brightRed,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.8,
                     ),

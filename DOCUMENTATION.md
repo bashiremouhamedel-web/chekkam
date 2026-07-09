@@ -11,16 +11,33 @@ rules, and full technical spec live in the companion documents in this folder:
 - `Chekkam_Phase2_Build_Spec.md` — the Phase 2 delta spec (channels, key issuance, the
   report→review→publish loop). "P2-xx" references below point into that document.
 
-## 0. Brand refresh (v2)
+## 0. Brand refresh (v3) + prototype-testing features
 
-The visual identity was redesigned: deepened "Lagoon" teal, one sparing gold accent, a
-Fraunces/Inter/IBM Plex Mono type system (a warm serif for headlines and verdicts, nodding to
-certificates and seals), bigger radii and soft layered shadows instead of flat Material
-defaults, an intent-first Flutter home screen, "seal moment" verify-result screens (one focal
-badge, one verdict word), and a sidebar + bento-stat-tile redesign of the web dashboard. Both
-light and dark mode are supported end to end in both clients. Full rationale and exact tokens
-are in `Chekkam_Brand_Guide.md` v2.0 — `lib/app/theme.dart` (Flutter) and
-`chekkam-backend/app/globals.css` are the source of truth in code.
+**Palette (v3, client-directed):** bold red/maroon/near-black/near-white, replacing v2's teal.
+Primary Red (`#F21137`) is the action color; Maroon (`#68020F`) is both the dark-surface anchor
+*and* the danger/tampered/critical status color (the palette only has one red family — see
+`Chekkam_Brand_Guide.md` §12 for how that compromise is kept safe: shade separation plus the
+icon+label rule, never color alone). Fraunces/Inter/IBM Plex Mono type system, radii, shadows,
+and both-themes support all carry over from v2 unchanged. Applied across all three codebases —
+Flutter (`lib/app/theme.dart`), web dashboard (`chekkam-backend/app/globals.css`), and the
+browser extension (`chekkam-extension/result.css`, icons regenerated in red).
+
+**Prototype demo access:** the `/login` page now displays the seeded demo `super_admin`
+credentials (`admin@chekkam.demo` / see `scripts/seed.ts` for the password) directly, with a
+"Fill in demo credentials" button, so anyone reviewing the prototype can sign in and use the
+full dashboard without an invite. This deliberately uses the *real* auth flow — no bypass
+endpoint, no weakened RBAC — it's just the existing seeded account made easy to find. **Remove
+or replace this box before any real launch**; it's fine for a reviewed prototype, not for a
+public production deployment where the seed credentials are guessable.
+
+**Citizen web app parity:** the web dashboard's public marketing page is now a real functional
+hub, not just a sign-in link. Three new pages mirror the Flutter app's core citizen flows for
+anyone testing from a plain browser with no install:
+- `/check` — paste a message/link → AI risk result (mirrors the Flutter report form)
+- `/verify` — manual ID/PIN entry or file upload → seal-moment result (mirrors the Flutter
+  verify hub); the existing `/verify/[verificationId]` direct-link page is unchanged and now
+  shares its status-style mapping with the new hub via `lib/verify-status-style.ts`
+- `/alerts` — public, human-approved alerts (already existed as an API; now has a real page)
 
 ## 1. Three coordinated codebases, one system
 
