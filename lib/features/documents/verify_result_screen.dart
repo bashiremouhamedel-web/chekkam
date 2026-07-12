@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/localization.dart';
 import '../../app/theme.dart';
+import '../../widgets/language_switch.dart';
 
-/// FR-045: verification result is exactly one of Genuine, Tampered, Revoked,
-/// Not Found. Redesigned as a single "seal moment" (Brand Guide v2) — one
-/// focal badge, one verdict word, nothing else competing for attention in a
-/// high-stakes moment. Copy stays calm and action-oriented per the brand
-/// voice — never alarmist, even for Tampered (SRS §13: cautious language).
+/// FR-045: verification result is one of Genuine, Tampered, Revoked, Not Found.
 class VerifyResultScreen extends StatelessWidget {
   const VerifyResultScreen({super.key, required this.result});
 
@@ -15,15 +13,24 @@ class VerifyResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final status = result['status'] as String? ?? 'not_found';
-    final config = _statusConfig(status);
+    final config = _statusConfig(status, l10n);
 
     return Scaffold(
       backgroundColor: ChekkamColors.surface,
-      appBar: AppBar(title: const Text('Verification result')),
+      appBar: AppBar(
+        title: Text(l10n.verificationResult),
+        actions: const [LanguageSwitch.compact()],
+      ),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(ChekkamSpacing.xl, ChekkamSpacing.xl, ChekkamSpacing.xl, ChekkamSpacing.xxxl),
+          padding: const EdgeInsets.fromLTRB(
+            ChekkamSpacing.xl,
+            ChekkamSpacing.xl,
+            ChekkamSpacing.xl,
+            ChekkamSpacing.xxxl,
+          ),
           children: [
             Center(
               child: Column(
@@ -36,7 +43,11 @@ class VerifyResultScreen extends StatelessWidget {
                       gradient: ChekkamColors.gradientForStatus(config.status),
                       boxShadow: [
                         ...ChekkamShadows.lg,
-                        BoxShadow(color: config.status.color.withValues(alpha: 0.18), blurRadius: 0, spreadRadius: 8),
+                        BoxShadow(
+                          color: config.status.color.withValues(alpha: 0.18),
+                          blurRadius: 0,
+                          spreadRadius: 8,
+                        ),
                       ],
                     ),
                     child: Icon(config.icon, size: 58, color: Colors.white),
@@ -45,32 +56,44 @@ class VerifyResultScreen extends StatelessWidget {
                   Text(
                     config.headline,
                     textAlign: TextAlign.center,
-                    style: ChekkamTheme.display(fontSize: 30, fontWeight: FontWeight.w600),
+                    style: ChekkamTheme.display(
+                      fontSize: 30,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   const SizedBox(height: ChekkamSpacing.sm),
                   Text(
                     config.guidance,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: ChekkamColors.muted),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyLarge?.copyWith(color: ChekkamColors.muted),
                   ),
                   if (result['verification_id'] != null) ...[
                     const SizedBox(height: ChekkamSpacing.lg),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: ChekkamSpacing.lg, vertical: ChekkamSpacing.sm),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: ChekkamSpacing.lg,
+                        vertical: ChekkamSpacing.sm,
+                      ),
                       decoration: BoxDecoration(
                         color: ChekkamColors.tint,
                         borderRadius: BorderRadius.circular(ChekkamRadius.pill),
                       ),
                       child: Text(
                         '${result['verification_id']}',
-                        style: ChekkamTheme.mono(fontSize: 14, color: ChekkamColors.ink),
+                        style: ChekkamTheme.mono(
+                          fontSize: 14,
+                          color: ChekkamColors.ink,
+                        ),
                       ),
                     ),
                   ],
                 ],
               ),
             ),
-            if (result['institution'] != null || result['document_type'] != null) ...[
+            if (result['institution'] != null ||
+                result['document_type'] != null) ...[
               const SizedBox(height: ChekkamSpacing.xxl),
               Container(
                 padding: const EdgeInsets.all(ChekkamSpacing.lg),
@@ -84,11 +107,20 @@ class VerifyResultScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (result['institution'] != null)
-                      _DetailRow(label: 'Issued by', value: '${result['institution']}'),
+                      _DetailRow(
+                        label: l10n.issuedBy,
+                        value: '${result['institution']}',
+                      ),
                     if (result['document_type'] != null)
-                      _DetailRow(label: 'Document type', value: '${result['document_type']}'),
+                      _DetailRow(
+                        label: l10n.documentType,
+                        value: '${result['document_type']}',
+                      ),
                     if (result['reason'] != null)
-                      _DetailRow(label: 'Reason', value: '${result['reason']}'),
+                      _DetailRow(
+                        label: l10n.reason,
+                        value: '${result['reason']}',
+                      ),
                   ],
                 ),
               ),
@@ -96,7 +128,7 @@ class VerifyResultScreen extends StatelessWidget {
             const SizedBox(height: ChekkamSpacing.xxl),
             OutlinedButton(
               onPressed: () => context.go('/'),
-              child: const Text('Back to home'),
+              child: Text(l10n.backToHome),
             ),
           ],
         ),
@@ -104,34 +136,32 @@ class VerifyResultScreen extends StatelessWidget {
     );
   }
 
-  _StatusConfig _statusConfig(String status) {
+  _StatusConfig _statusConfig(String status, AppLocalizations l10n) {
     return switch (status) {
       'genuine' => _StatusConfig(
-          status: ChekkamStatus.success,
-          icon: Icons.verified_rounded,
-          headline: 'Genuine.',
-          guidance: 'Its signature matches the issuing institution\'s records and has not been revoked.',
-        ),
+        status: ChekkamStatus.success,
+        icon: Icons.verified_rounded,
+        headline: l10n.verifyHeadline(status),
+        guidance: l10n.verifyGuidance(status),
+      ),
       'tampered' => _StatusConfig(
-          status: ChekkamStatus.danger,
-          icon: Icons.gpp_bad_rounded,
-          headline: 'Tampered.',
-          guidance:
-              'The content does not match what was signed. Contact the issuing institution before relying on it.',
-        ),
+        status: ChekkamStatus.danger,
+        icon: Icons.gpp_bad_rounded,
+        headline: l10n.verifyHeadline(status),
+        guidance: l10n.verifyGuidance(status),
+      ),
       'revoked' => _StatusConfig(
-          status: ChekkamStatus.neutral,
-          icon: Icons.block_rounded,
-          headline: 'Revoked.',
-          guidance: 'The issuing institution withdrew this document. See the reason below if provided.',
-        ),
+        status: ChekkamStatus.neutral,
+        icon: Icons.block_rounded,
+        headline: l10n.verifyHeadline(status),
+        guidance: l10n.verifyGuidance(status),
+      ),
       _ => _StatusConfig(
-          status: ChekkamStatus.neutral,
-          icon: Icons.help_outline_rounded,
-          headline: 'Not found.',
-          guidance:
-              'Double-check the ID or PIN, or try scanning the QR code again. Contact the issuing institution if you believe this is a mistake.',
-        ),
+        status: ChekkamStatus.neutral,
+        icon: Icons.help_outline_rounded,
+        headline: l10n.verifyHeadline(status),
+        guidance: l10n.verifyGuidance(status),
+      ),
     };
   }
 }
@@ -167,11 +197,18 @@ class _DetailRow extends StatelessWidget {
             width: 120,
             child: Text(
               label,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: ChekkamColors.faint),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: ChekkamColors.faint),
             ),
           ),
           Expanded(
-            child: Text(value, style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+            child: Text(
+              value,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+            ),
           ),
         ],
       ),

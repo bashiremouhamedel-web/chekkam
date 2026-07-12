@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/localization.dart';
 import '../../app/theme.dart';
 import '../../services/api_client.dart';
 import '../../services/providers.dart';
+import '../../widgets/language_switch.dart';
 
 class ManualVerifyScreen extends ConsumerStatefulWidget {
   const ManualVerifyScreen({super.key});
@@ -25,9 +27,10 @@ class _ManualVerifyScreenState extends ConsumerState<ManualVerifyScreen> {
   }
 
   Future<void> _submit() async {
+    final l10n = context.l10n;
     final value = _controller.text.trim();
     if (value.isEmpty) {
-      setState(() => _error = 'Enter a verification ID or PIN.');
+      setState(() => _error = l10n.enterVerificationIdError);
       return;
     }
     setState(() {
@@ -36,7 +39,9 @@ class _ManualVerifyScreenState extends ConsumerState<ManualVerifyScreen> {
     });
 
     try {
-      final result = await ref.read(apiClientProvider).verifyDocumentById(value);
+      final result = await ref
+          .read(apiClientProvider)
+          .verifyDocumentById(value);
       if (!mounted) return;
       context.push('/documents/verify/result', extra: result);
     } on ApiException catch (e) {
@@ -48,16 +53,23 @@ class _ManualVerifyScreenState extends ConsumerState<ManualVerifyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Enter ID or PIN')),
+      appBar: AppBar(
+        title: Text(l10n.enterIdOrPin),
+        actions: const [LanguageSwitch.compact()],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(ChekkamSpacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Type the verification ID (e.g. CHK-4F7K-9QRT) or the 6-digit PIN printed on the document.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: ChekkamColors.muted),
+              l10n.manualVerifyIntro,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: ChekkamColors.muted),
             ),
             const SizedBox(height: ChekkamSpacing.lg),
             TextField(
@@ -66,13 +78,19 @@ class _ManualVerifyScreenState extends ConsumerState<ManualVerifyScreen> {
               style: ChekkamTheme.mono(fontSize: 16, color: ChekkamColors.ink),
               decoration: InputDecoration(
                 hintText: 'CHK-4F7K-9QRT or 482915',
-                hintStyle: ChekkamTheme.mono(fontSize: 16, color: ChekkamColors.faint),
+                hintStyle: ChekkamTheme.mono(
+                  fontSize: 16,
+                  color: ChekkamColors.faint,
+                ),
               ),
               onSubmitted: (_) => _submit(),
             ),
             if (_error != null) ...[
               const SizedBox(height: ChekkamSpacing.sm),
-              Text(_error!, style: const TextStyle(color: ChekkamColors.danger)),
+              Text(
+                _error!,
+                style: const TextStyle(color: ChekkamColors.danger),
+              ),
             ],
             const SizedBox(height: ChekkamSpacing.xl),
             ElevatedButton(
@@ -81,9 +99,12 @@ class _ManualVerifyScreenState extends ConsumerState<ManualVerifyScreen> {
                   ? const SizedBox(
                       height: 20,
                       width: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
                     )
-                  : const Text('Verify'),
+                  : Text(l10n.verify),
             ),
           ],
         ),

@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/localization.dart';
 import '../../app/theme.dart';
 import '../../services/providers.dart';
 import '../../widgets/icon_circle.dart';
+import '../../widgets/language_switch.dart';
 
 /// Latest published alert for the home screen's "what's happening" strip.
 /// Fails silently to null (no backend configured, offline, etc.) — the home
 /// screen must never break just because this optional preview couldn't load.
 final _latestAlertProvider = FutureProvider<Map<String, dynamic>?>((ref) async {
   try {
-    final body = await ref.read(apiClientProvider).listPublicAlerts();
+    final body = await ref.watch(apiClientProvider).listPublicAlerts();
     final alerts = (body['alerts'] as List?) ?? const [];
     return alerts.isEmpty ? null : alerts.first as Map<String, dynamic>;
   } catch (_) {
@@ -28,9 +30,12 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
     final latestAlert = ref.watch(_latestAlertProvider);
     final hour = DateTime.now().hour;
-    final greeting = hour < 12 ? 'Good morning' : (hour < 18 ? 'Good afternoon' : 'Good evening');
+    final greeting = hour < 12
+        ? l10n.goodMorning
+        : (hour < 18 ? l10n.goodAfternoon : l10n.goodEvening);
 
     return Scaffold(
       backgroundColor: ChekkamColors.surface,
@@ -51,16 +56,20 @@ class HomeScreen extends ConsumerWidget {
                   children: [
                     Text(
                       greeting,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(color: ChekkamColors.faint),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: ChekkamColors.faint,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     Text('Chekkam', style: ChekkamTheme.display(fontSize: 26)),
                   ],
                 ),
-                const IconCircle(icon: Icons.check_rounded, gradient: true),
+                const Row(
+                  children: [
+                    LanguageSwitch.compact(),
+                    IconCircle(icon: Icons.check_rounded, gradient: true),
+                  ],
+                ),
               ],
             ),
             const SizedBox(height: ChekkamSpacing.xl),
@@ -75,8 +84,8 @@ class HomeScreen extends ConsumerWidget {
                 Expanded(
                   child: _ActionTile(
                     icon: Icons.qr_code_scanner_rounded,
-                    title: 'Verify a document',
-                    subtitle: 'Scan, PIN, or upload',
+                    title: l10n.verifyDocument,
+                    subtitle: l10n.scanPinOrUpload,
                     onTap: () => context.push('/documents/verify'),
                   ),
                 ),
@@ -84,8 +93,8 @@ class HomeScreen extends ConsumerWidget {
                 Expanded(
                   child: _ActionTile(
                     icon: Icons.shield_moon_outlined,
-                    title: 'Public alerts',
-                    subtitle: 'Reviewed warnings',
+                    title: l10n.publicAlerts,
+                    subtitle: l10n.reviewedWarnings,
                     onTap: () => context.push('/alerts'),
                   ),
                 ),
@@ -94,24 +103,24 @@ class HomeScreen extends ConsumerWidget {
 
             const SizedBox(height: ChekkamSpacing.xl),
             Text(
-              'Coming soon',
+              l10n.comingSoon,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.6,
-                    color: ChekkamColors.faint,
-                  ),
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.6,
+                color: ChekkamColors.faint,
+              ),
             ),
             const SizedBox(height: ChekkamSpacing.md),
-            const _ComingSoonRow(
+            _ComingSoonRow(
               icon: Icons.extension_outlined,
-              title: 'Verify Everywhere',
-              subtitle: 'A browser extension for checking links where you already are.',
+              title: l10n.verifyEverywhere,
+              subtitle: l10n.verifyEverywhereSubtitle,
             ),
             const SizedBox(height: ChekkamSpacing.sm),
-            const _ComingSoonRow(
+            _ComingSoonRow(
               icon: Icons.groups_outlined,
-              title: 'Protect Communities',
-              subtitle: 'Moderated local safety alerts, alongside emergency services.',
+              title: l10n.protectCommunities,
+              subtitle: l10n.protectCommunitiesSubtitle,
             ),
 
             latestAlert.when(
@@ -142,6 +151,8 @@ class _PasteToCheckCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -158,16 +169,16 @@ class _PasteToCheckCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'GOT SOMETHING SUSPICIOUS?',
+                l10n.gotSomethingSuspicious,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: ChekkamColors.brightRed,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.8,
-                    ),
+                  color: ChekkamColors.brightRed,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.8,
+                ),
               ),
               const SizedBox(height: ChekkamSpacing.sm),
               Text(
-                'Paste a message, a link, or forward it from WhatsApp.',
+                l10n.pasteSuspicious,
                 style: ChekkamTheme.display(
                   fontSize: 21,
                   fontWeight: FontWeight.w500,
@@ -189,13 +200,17 @@ class _PasteToCheckCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Paste to check',
+                      l10n.pasteToCheck,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.white.withValues(alpha: 0.92),
-                            fontWeight: FontWeight.w600,
-                          ),
+                        color: Colors.white.withValues(alpha: 0.92),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                    const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 20),
+                    const Icon(
+                      Icons.arrow_forward_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ],
                 ),
               ),
@@ -240,11 +255,18 @@ class _ActionTile extends StatelessWidget {
             children: [
               IconCircle(icon: icon, size: 42, iconSize: 20),
               const SizedBox(height: ChekkamSpacing.md),
-              Text(title, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 15)),
+              Text(
+                title,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontSize: 15),
+              ),
               const SizedBox(height: 2),
               Text(
                 subtitle,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: ChekkamColors.faint),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: ChekkamColors.faint),
               ),
             ],
           ),
@@ -255,7 +277,11 @@ class _ActionTile extends StatelessWidget {
 }
 
 class _ComingSoonRow extends StatelessWidget {
-  const _ComingSoonRow({required this.icon, required this.title, required this.subtitle});
+  const _ComingSoonRow({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+  });
 
   final IconData icon;
   final String title;
@@ -263,6 +289,8 @@ class _ComingSoonRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Container(
       padding: const EdgeInsets.all(ChekkamSpacing.md),
       decoration: BoxDecoration(
@@ -277,10 +305,17 @@ class _ComingSoonRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+                Text(
+                  title,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                ),
                 Text(
                   subtitle,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: ChekkamColors.faint),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: ChekkamColors.faint),
                 ),
               ],
             ),
@@ -292,12 +327,12 @@ class _ComingSoonRow extends StatelessWidget {
               borderRadius: BorderRadius.circular(ChekkamRadius.pill),
             ),
             child: Text(
-              'Next phase',
+              l10n.nextPhase,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: ChekkamColors.primary,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 10.5,
-                  ),
+                color: ChekkamColors.primary,
+                fontWeight: FontWeight.w700,
+                fontSize: 10.5,
+              ),
             ),
           ),
         ],
@@ -307,7 +342,11 @@ class _ComingSoonRow extends StatelessWidget {
 }
 
 class _LatestAlertStrip extends StatelessWidget {
-  const _LatestAlertStrip({required this.title, required this.body, required this.onTap});
+  const _LatestAlertStrip({
+    required this.title,
+    required this.body,
+    required this.onTap,
+  });
 
   final String title;
   final String body;
@@ -331,19 +370,30 @@ class _LatestAlertStrip extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.campaign_rounded, size: 20, color: ChekkamColors.warning),
+              Icon(
+                Icons.campaign_rounded,
+                size: 20,
+                color: ChekkamColors.warning,
+              ),
               const SizedBox(width: ChekkamSpacing.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700)),
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                     const SizedBox(height: 2),
                     Text(
                       body,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: ChekkamColors.muted),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: ChekkamColors.muted,
+                      ),
                     ),
                   ],
                 ),

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/localization.dart';
 import '../../app/theme.dart';
+import '../../widgets/language_switch.dart';
 import '../../widgets/status_badge.dart';
 
 /// FR-012/FR-024: shows the AI risk result, always labeled as advisory and
-/// pending human review — never a final verdict (SRS §13 cautious language).
+/// pending human review, never a final verdict.
 class ReportResultScreen extends StatelessWidget {
   const ReportResultScreen({super.key, required this.report});
 
@@ -13,39 +15,47 @@ class ReportResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final riskLevel = report['risk_level'] as String?;
     final reasons = (report['ai_reasons'] as List?)?.cast<String>() ?? const [];
     final recommendedAction = report['recommended_action'] as String?;
-    final config = _riskConfig(riskLevel);
+    final config = _riskConfig(riskLevel, l10n);
 
     return Scaffold(
       backgroundColor: ChekkamColors.surface,
-      appBar: AppBar(title: const Text('Analysis result')),
+      appBar: AppBar(
+        title: Text(l10n.analysisResult),
+        actions: const [LanguageSwitch.compact()],
+      ),
       body: ListView(
         padding: const EdgeInsets.all(ChekkamSpacing.xl),
         children: [
           if (config != null)
-            StatusBadge(status: config.status, label: config.label, icon: Icons.shield_outlined)
+            StatusBadge(
+              status: config.status,
+              label: config.label,
+              icon: Icons.shield_outlined,
+            )
           else
-            const StatusBadge(
+            StatusBadge(
               status: ChekkamStatus.neutral,
-              label: 'Pending review',
+              label: l10n.pendingReview,
               icon: Icons.hourglass_empty_rounded,
             ),
           const SizedBox(height: ChekkamSpacing.lg),
           Text(
-            recommendedAction ?? 'This report is queued for review — check back shortly.',
+            recommendedAction ?? l10n.reportQueued,
             style: ChekkamTheme.display(fontSize: 24, height: 1.25),
           ),
           if (reasons.isNotEmpty) ...[
             const SizedBox(height: ChekkamSpacing.xl),
             Text(
-              'WHY WE THINK THIS',
+              l10n.whyWeThinkThis,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.6,
-                    color: ChekkamColors.faint,
-                  ),
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.6,
+                color: ChekkamColors.faint,
+              ),
             ),
             const SizedBox(height: ChekkamSpacing.sm),
             Container(
@@ -61,13 +71,24 @@ class ReportResultScreen extends StatelessWidget {
                 children: [
                   for (final reason in reasons)
                     Padding(
-                      padding: EdgeInsets.only(bottom: reason == reasons.last ? 0 : ChekkamSpacing.sm),
+                      padding: EdgeInsets.only(
+                        bottom: reason == reasons.last ? 0 : ChekkamSpacing.sm,
+                      ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(Icons.circle, size: 6, color: ChekkamColors.faint),
+                          Icon(
+                            Icons.circle,
+                            size: 6,
+                            color: ChekkamColors.faint,
+                          ),
                           const SizedBox(width: ChekkamSpacing.sm),
-                          Expanded(child: Text(reason, style: Theme.of(context).textTheme.bodyMedium)),
+                          Expanded(
+                            child: Text(
+                              reason,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -84,12 +105,14 @@ class ReportResultScreen extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(Icons.info_outline_rounded, color: ChekkamColors.primary),
+                const Icon(
+                  Icons.info_outline_rounded,
+                  color: ChekkamColors.primary,
+                ),
                 const SizedBox(width: ChekkamSpacing.md),
                 Expanded(
                   child: Text(
-                    'This is an automated first look. A Chekkam analyst reviews every report before any '
-                    'final action is taken.',
+                    l10n.automatedFirstLook,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),
@@ -99,19 +122,31 @@ class ReportResultScreen extends StatelessWidget {
           const SizedBox(height: ChekkamSpacing.xl),
           OutlinedButton(
             onPressed: () => context.go('/'),
-            child: const Text('Back to home'),
+            child: Text(l10n.backToHome),
           ),
         ],
       ),
     );
   }
 
-  _RiskConfig? _riskConfig(String? level) {
+  _RiskConfig? _riskConfig(String? level, AppLocalizations l10n) {
     return switch (level) {
-      'low' => _RiskConfig(status: ChekkamStatus.success, label: 'Low risk'),
-      'medium' => _RiskConfig(status: ChekkamStatus.warning, label: 'Medium risk'),
-      'high' => _RiskConfig(status: ChekkamStatus.danger, label: 'High risk'),
-      'critical' => _RiskConfig(status: ChekkamStatus.danger, label: 'Critical risk'),
+      'low' => _RiskConfig(
+        status: ChekkamStatus.success,
+        label: l10n.riskLabel(level),
+      ),
+      'medium' => _RiskConfig(
+        status: ChekkamStatus.warning,
+        label: l10n.riskLabel(level),
+      ),
+      'high' => _RiskConfig(
+        status: ChekkamStatus.danger,
+        label: l10n.riskLabel(level),
+      ),
+      'critical' => _RiskConfig(
+        status: ChekkamStatus.danger,
+        label: l10n.riskLabel(level),
+      ),
       _ => null,
     };
   }

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../app/localization.dart';
 import '../../app/theme.dart';
 import '../../services/api_client.dart';
 import '../../services/providers.dart';
+import '../../widgets/language_switch.dart';
 
 /// FR-090: human-approved public alerts, visible without an account.
 class PublicAlertsScreen extends ConsumerStatefulWidget {
@@ -29,9 +31,14 @@ class _PublicAlertsScreenState extends ConsumerState<PublicAlertsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Scaffold(
       backgroundColor: ChekkamColors.surface,
-      appBar: AppBar(title: const Text('Public alerts')),
+      appBar: AppBar(
+        title: Text(l10n.publicAlerts),
+        actions: const [LanguageSwitch.compact()],
+      ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _future,
         builder: (context, snapshot) {
@@ -39,8 +46,9 @@ class _PublicAlertsScreenState extends ConsumerState<PublicAlertsScreen> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            final message =
-                snapshot.error is ApiException ? (snapshot.error as ApiException).message : 'Something went wrong.';
+            final message = snapshot.error is ApiException
+                ? (snapshot.error as ApiException).message
+                : l10n.somethingWentWrong;
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(ChekkamSpacing.xl),
@@ -52,15 +60,18 @@ class _PublicAlertsScreenState extends ConsumerState<PublicAlertsScreen> {
           if (alerts.isEmpty) {
             return Center(
               child: Text(
-                'No active alerts right now.',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: ChekkamColors.muted),
+                l10n.noActiveAlerts,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: ChekkamColors.muted),
               ),
             );
           }
           return ListView.separated(
             padding: const EdgeInsets.all(ChekkamSpacing.lg),
             itemCount: alerts.length,
-            separatorBuilder: (_, _) => const SizedBox(height: ChekkamSpacing.md),
+            separatorBuilder: (_, _) =>
+                const SizedBox(height: ChekkamSpacing.md),
             itemBuilder: (context, index) {
               final alert = alerts[index];
               final severity = '${alert['severity'] ?? 'info'}';
@@ -75,15 +86,25 @@ class _PublicAlertsScreenState extends ConsumerState<PublicAlertsScreen> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.campaign_rounded, color: severityColor, size: 22),
+                      Icon(
+                        Icons.campaign_rounded,
+                        color: severityColor,
+                        size: 22,
+                      ),
                       const SizedBox(width: ChekkamSpacing.md),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('${alert['title']}', style: Theme.of(context).textTheme.titleLarge),
+                            Text(
+                              '${alert['title']}',
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
                             const SizedBox(height: ChekkamSpacing.sm),
-                            Text('${alert['body']}', style: Theme.of(context).textTheme.bodyMedium),
+                            Text(
+                              '${alert['body']}',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
                           ],
                         ),
                       ),

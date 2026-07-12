@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../app/localization.dart';
 import '../app/theme.dart';
 import 'icon_circle.dart';
 
@@ -17,9 +18,13 @@ class PermissionPrimerSheet {
     final result = await showModalBottomSheet<bool>(
       context: context,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(ChekkamRadius.card)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(ChekkamRadius.card),
+        ),
       ),
       builder: (context) {
+        final l10n = context.l10n;
+
         return Padding(
           padding: const EdgeInsets.fromLTRB(
             ChekkamSpacing.xl,
@@ -42,14 +47,14 @@ class PermissionPrimerSheet {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => Navigator.of(context).pop(false),
-                      child: const Text('Not now'),
+                      child: Text(l10n.notNow),
                     ),
                   ),
                   const SizedBox(width: ChekkamSpacing.md),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () => Navigator.of(context).pop(true),
-                      child: const Text('Continue'),
+                      child: Text(l10n.continueAction),
                     ),
                   ),
                 ],
