@@ -92,6 +92,15 @@ class HomeScreen extends ConsumerWidget {
                 const SizedBox(width: ChekkamSpacing.md),
                 Expanded(
                   child: _ActionTile(
+                    icon: Icons.document_scanner_outlined,
+                    title: l10n.extractText,
+                    subtitle: l10n.extractTextSubtitle,
+                    onTap: () => context.push('/ocr/upload'),
+                  ),
+                ),
+                const SizedBox(width: ChekkamSpacing.md),
+                Expanded(
+                  child: _ActionTile(
                     icon: Icons.shield_moon_outlined,
                     title: l10n.publicAlerts,
                     subtitle: l10n.reviewedWarnings,

@@ -7,6 +7,9 @@ import '../features/documents/upload_verify_screen.dart';
 import '../features/documents/verify_hub_screen.dart';
 import '../features/documents/verify_result_screen.dart';
 import '../features/home/home_screen.dart';
+import '../features/ocr/ocr_history_screen.dart';
+import '../features/ocr/ocr_result_screen.dart';
+import '../features/ocr/ocr_upload_screen.dart';
 import '../features/reports/report_form_screen.dart';
 import '../features/reports/report_result_screen.dart';
 
@@ -47,6 +50,19 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/alerts',
       builder: (context, state) => const PublicAlertsScreen(),
+    ),
+    GoRoute(
+      path: '/ocr/upload',
+      builder: (context, state) => const OcrUploadScreen(),
+    ),
+    GoRoute(
+      path: '/ocr/result',
+      builder: (context, state) =>
+          OcrResultScreen(result: state.extra as Map<String, dynamic>? ?? const {}),
+    ),
+    GoRoute(
+      path: '/ocr/history',
+      builder: (context, state) => const OcrHistoryScreen(),
     ),
   ],
 );

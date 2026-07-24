@@ -119,6 +119,35 @@ class ApiClient {
 
   Future<Map<String, dynamic>> listPublicAlerts() => _get('/api/public-alerts');
 
+  /// Extract text from an uploaded image or PDF (Phase 2 OCR).
+  Future<Map<String, dynamic>> uploadForOcr({
+    required List<int> fileBytes,
+    required String filename,
+  }) async {
+    try {
+      final request = http.MultipartRequest('POST', _uri('/api/ocr/upload'));
+      if (accessToken != null) {
+        request.headers['Authorization'] = 'Bearer $accessToken';
+      }
+      request.headers['Accept-Language'] = _language;
+      request.files.add(
+        http.MultipartFile.fromBytes('file', fileBytes, filename: filename),
+      );
+
+      final streamed = await _client.send(request).timeout(_timeout);
+      final response = await http.Response.fromStream(streamed);
+      return _handle(response);
+    } on SocketException {
+      throw ApiException(_connectionErrorMessage, code: 'NETWORK_ERROR');
+    } on http.ClientException {
+      throw ApiException(_connectionErrorMessage, code: 'NETWORK_ERROR');
+    }
+  }
+
+  Future<Map<String, dynamic>> getOcrHistory() => _get('/api/ocr/history');
+
+  Future<Map<String, dynamic>> getOcrById(String id) => _get('/api/ocr/$id');
+
   Future<Map<String, dynamic>> _get(
     String path, {
     Map<String, String>? query,

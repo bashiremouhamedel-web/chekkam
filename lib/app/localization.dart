@@ -186,6 +186,72 @@ class AppLocalizations {
   String get notNow => isFrench ? 'Pas maintenant' : 'Not now';
   String get continueAction => isFrench ? 'Continuer' : 'Continue';
 
+  String get extractText => isFrench ? 'Extraire le texte' : 'Extract text';
+  String get extractTextSubtitle => isFrench
+      ? 'Depuis une image ou un PDF'
+      : 'From an image or PDF';
+  String get chooseFileForOcr => isFrench
+      ? 'Choisir un fichier à analyser'
+      : 'Choose a file to extract text from';
+  String get ocrPrimerExplanation => isFrench
+      ? 'Choisissez une image ou un PDF. Seul ce fichier sera envoyé à Chekkam pour en extraire le texte.'
+      : 'Pick an image or PDF. Only that one file is sent to Chekkam to extract its text.';
+  String get ocrUploadIntro => isFrench
+      ? "Importez une capture d'écran, une photo ou un PDF. Chekkam en extrait le texte pour vous."
+      : "Upload a screenshot, photo, or PDF. Chekkam extracts its text for you.";
+  String get ocrProcessing => isFrench
+      ? 'Téléversement et analyse en cours…'
+      : 'Uploading and analyzing…';
+  String get ocrHistory =>
+      isFrench ? 'Historique des extractions' : 'OCR history';
+  String get ocrResult => isFrench ? "Résultat de l'extraction" : 'OCR result';
+  String get extractedText =>
+      isFrench ? 'TEXTE EXTRAIT' : 'EXTRACTED TEXT';
+  String get copyText => isFrench ? 'Copier' : 'Copy';
+  String get shareText => isFrench ? 'Partager' : 'Share';
+  String get copiedToClipboard =>
+      isFrench ? 'Copié dans le presse-papiers.' : 'Copied to clipboard.';
+  String get noOcrHistory => isFrench
+      ? "Aucune extraction pour l'instant."
+      : 'No OCR extractions yet.';
+
+  String confidenceLabel(String level) {
+    return switch (level) {
+      'high' => isFrench ? 'Confiance élevée' : 'High confidence',
+      'medium' => isFrench ? 'Confiance moyenne' : 'Medium confidence',
+      _ => isFrench ? 'Confiance faible' : 'Low confidence',
+    };
+  }
+
+  String get ocrStatusDone => isFrench ? 'Terminé' : 'Done';
+  String get ocrStatusUnavailable =>
+      isFrench ? 'Indisponible' : 'Unavailable';
+  String get ocrStatusFailed => isFrench ? 'Échec' : 'Failed';
+
+  String get ocrDoneHeadline =>
+      isFrench ? "Texte extrait avec succès." : 'Text extracted successfully.';
+  String get ocrDoneGuidance => isFrench
+      ? "Ce texte a été extrait automatiquement et peut contenir des erreurs, surtout sur les photos peu nettes."
+      : 'This text was extracted automatically and may contain mistakes, especially on unclear photos.';
+  String get ocrUnavailableHeadline =>
+      isFrench ? "Extraction indisponible pour le moment." : 'Extraction is unavailable right now.';
+  String get ocrUnavailableGuidance => isFrench
+      ? "Le service d'extraction n'est pas configuré ou temporairement indisponible. Réessayez plus tard."
+      : "The extraction service isn't configured or is temporarily unavailable. Please try again later.";
+  String get ocrFailedHeadline =>
+      isFrench ? "L'extraction a échoué." : 'Extraction failed.';
+  String get ocrFailedGuidance => isFrench
+      ? "Une erreur inattendue est survenue avec ce fichier. Essayez un autre fichier ou réessayez plus tard."
+      : 'Something unexpected went wrong with this file. Try a different file or try again later.';
+
+  String ocrStatusForHistory(String status) {
+    return switch (status) {
+      'done' => ocrStatusDone,
+      'unavailable' => ocrStatusUnavailable,
+      _ => ocrStatusFailed,
+    };
+  }
+
   String get apiConnectionError => isFrench
       ? 'Impossible de joindre le serveur Chekkam. Vérifiez votre connexion et réessayez.'
       : 'Could not reach the Chekkam server. Check your connection and try again.';
