@@ -57,12 +57,16 @@ class ApiClient {
   };
 
   /// FR-010: submit suspicious text/link content and get back the AI risk result.
+  /// [evidenceId] links a prior [uploadForOcr] result to this report, when
+  /// checking an image/screenshot: OCR first, then the extracted text is
+  /// submitted here as content_type "text" (Phase 3 pipeline).
   Future<Map<String, dynamic>> submitReport({
     required String contentType,
     String? rawContent,
     String? fileUrl,
     String channel = 'mobile',
     String? language,
+    String? evidenceId,
   }) {
     return _post('/api/reports', {
       'content_type': contentType,
@@ -70,6 +74,7 @@ class ApiClient {
       'file_url': ?fileUrl,
       'channel': channel,
       'language': language ?? _language,
+      'evidence_id': ?evidenceId,
     });
   }
 

@@ -252,6 +252,22 @@ class AppLocalizations {
     };
   }
 
+  String get suspiciousPhrases =>
+      isFrench ? 'PASSAGES SUSPECTS' : 'SUSPICIOUS PHRASES';
+  String get ocrNoTextFound => isFrench
+      ? "Aucun texte n'a pu être extrait de cette image."
+      : "No text could be extracted from that image.";
+  String similarReportsFound(int count) {
+    if (isFrench) {
+      return count == 1
+          ? '1 signalement similaire trouvé'
+          : '$count signalements similaires trouvés';
+    }
+    return count == 1
+        ? '1 similar report found'
+        : '$count similar reports found';
+  }
+
   String get apiConnectionError => isFrench
       ? 'Impossible de joindre le serveur Chekkam. Vérifiez votre connexion et réessayez.'
       : 'Could not reach the Chekkam server. Check your connection and try again.';

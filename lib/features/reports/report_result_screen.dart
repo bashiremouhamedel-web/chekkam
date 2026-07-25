@@ -18,6 +18,9 @@ class ReportResultScreen extends StatelessWidget {
     final l10n = context.l10n;
     final riskLevel = report['risk_level'] as String?;
     final reasons = (report['ai_reasons'] as List?)?.cast<String>() ?? const [];
+    final suspiciousPhrases =
+        (report['suspicious_phrases'] as List?)?.cast<String>() ?? const [];
+    final relatedReports = (report['related_reports'] as List?) ?? const [];
     final recommendedAction = report['recommended_action'] as String?;
     final config = _riskConfig(riskLevel, l10n);
 
@@ -94,6 +97,49 @@ class ReportResultScreen extends StatelessWidget {
                     ),
                 ],
               ),
+            ),
+          ],
+          if (suspiciousPhrases.isNotEmpty) ...[
+            const SizedBox(height: ChekkamSpacing.xl),
+            Text(
+              l10n.suspiciousPhrases,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.6,
+                color: ChekkamColors.faint,
+              ),
+            ),
+            const SizedBox(height: ChekkamSpacing.sm),
+            Wrap(
+              spacing: ChekkamSpacing.sm,
+              runSpacing: ChekkamSpacing.sm,
+              children: [
+                for (final phrase in suspiciousPhrases)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: ChekkamSpacing.md,
+                      vertical: ChekkamSpacing.sm,
+                    ),
+                    decoration: BoxDecoration(
+                      color: ChekkamColors.tint,
+                      borderRadius: BorderRadius.circular(ChekkamRadius.pill),
+                    ),
+                    child: Text(
+                      phrase,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: ChekkamColors.primary,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+          if (relatedReports.isNotEmpty) ...[
+            const SizedBox(height: ChekkamSpacing.lg),
+            StatusBadge(
+              status: ChekkamStatus.neutral,
+              label: l10n.similarReportsFound(relatedReports.length),
+              icon: Icons.dynamic_feed_outlined,
             ),
           ],
           const SizedBox(height: ChekkamSpacing.xl),
