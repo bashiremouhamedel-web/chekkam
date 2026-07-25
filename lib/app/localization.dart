@@ -148,6 +148,7 @@ class AppLocalizations {
       'genuine' => isFrench ? 'Authentique.' : 'Genuine.',
       'tampered' => isFrench ? 'Falsifié.' : 'Tampered.',
       'revoked' => isFrench ? 'Révoqué.' : 'Revoked.',
+      'expired' => isFrench ? 'Expiré.' : 'Expired.',
       _ => isFrench ? 'Introuvable.' : 'Not found.',
     };
   }
@@ -166,6 +167,10 @@ class AppLocalizations {
         isFrench
             ? "L’institution émettrice a retiré ce document. Consultez la raison ci-dessous si elle est fournie."
             : 'The issuing institution withdrew this document. See the reason below if provided.',
+      'expired' =>
+        isFrench
+            ? "La période de validité de ce document est terminée. Contactez l’institution émettrice si vous avez besoin d’un document à jour."
+            : "This document's validity period has ended. Contact the issuing institution if you need a current one.",
       _ =>
         isFrench
             ? "Vérifiez l’ID ou le PIN, ou réessayez de scanner le code QR. Contactez l’institution émettrice si vous pensez qu’il s’agit d’une erreur."
@@ -176,6 +181,8 @@ class AppLocalizations {
   String get issuedBy => isFrench ? 'Émis par' : 'Issued by';
   String get documentType => isFrench ? 'Type de document' : 'Document type';
   String get reason => isFrench ? 'Raison' : 'Reason';
+  String get revokedOn => isFrench ? 'Révoqué le' : 'Revoked on';
+  String get expiresOn => isFrench ? 'Expire le' : 'Expires on';
 
   String get noActiveAlerts => isFrench
       ? 'Aucune alerte active pour le moment.'

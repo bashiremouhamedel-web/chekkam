@@ -121,6 +121,16 @@ class VerifyResultScreen extends StatelessWidget {
                         label: l10n.reason,
                         value: '${result['reason']}',
                       ),
+                    if (result['revoked_at'] != null)
+                      _DetailRow(
+                        label: l10n.revokedOn,
+                        value: '${result['revoked_at']}',
+                      ),
+                    if (result['expiry_date'] != null)
+                      _DetailRow(
+                        label: l10n.expiresOn,
+                        value: '${result['expiry_date']}',
+                      ),
                   ],
                 ),
               ),
@@ -153,6 +163,12 @@ class VerifyResultScreen extends StatelessWidget {
       'revoked' => _StatusConfig(
         status: ChekkamStatus.neutral,
         icon: Icons.block_rounded,
+        headline: l10n.verifyHeadline(status),
+        guidance: l10n.verifyGuidance(status),
+      ),
+      'expired' => _StatusConfig(
+        status: ChekkamStatus.warning,
+        icon: Icons.event_busy_rounded,
         headline: l10n.verifyHeadline(status),
         guidance: l10n.verifyGuidance(status),
       ),
